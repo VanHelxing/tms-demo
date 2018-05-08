@@ -4,7 +4,7 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/vanhx?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull
     username: root
-    password: vanhx123456
+    password: db2admin
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
       minimum-idle: 5
@@ -17,7 +17,7 @@ spring:
       connection-test-query: select 1
   #thymeleaf
   thymeleaf:
-    prefix: classpath:/templates/view/
+    prefix: classpath:/templates/
     suffix: .html
     mode: HTML5
     encoding: UTF-8

@@ -11,12 +11,12 @@
     </resultMap>
 
     <!-- 通过客户编号查询客户信息 -->
-    <select id="findByUserId" parameterType="String" resultMap="resultMap">
+    <select id="findByUserName" parameterType="String" resultMap="resultMap">
         select <include refid="select_files"/>
           from sys_user u
             left join sys_role_user ru on ru.sys_user_id = u.id
             left join sys_role r on r.id = ru.sys_role_id
-        where u.id = #{userName}
+        where u.username = #{userName}
     </select>
 
     <sql id="select_files">

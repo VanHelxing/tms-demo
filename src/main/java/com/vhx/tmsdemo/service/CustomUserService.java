@@ -24,7 +24,7 @@ public class CustomUserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 
         SystemUser user = userDao.findByUserName(userName);
-        if(user != null){
+        if(user == null){
             throw new UsernameNotFoundException("该用户名不存在！");
         }
 

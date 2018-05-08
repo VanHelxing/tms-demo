@@ -19,7 +19,7 @@ public class MyBatisConfig {
     public SqlSessionFactoryBean sqlSessionFactory(ApplicationContext applicationContext) throws IOException {
         SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
         sessionFactory.setDataSource(dataSource);
-        sessionFactory.setMapperLocations(applicationContext.getResources("classpath*:com/vhx/tmsdemo/mapper/*/*.xml"));
+        sessionFactory.setMapperLocations(applicationContext.getResources("classpath*:mapper/*.xml"));
         return sessionFactory;
     }
 }
