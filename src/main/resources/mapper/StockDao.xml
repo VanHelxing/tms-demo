@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vhx.tmsdemo.mapper.StockDao">
+
+    <insert id="insert" parameterType="com.vhx.tmsdemo.entity.system.Stock">
+        insert into stock(qty,cost,type,change_qty,change_cost,last_purchase_price,
+                           avage_purchase_price,reside_qty,reside_cost)
+        values(#{qty},
+                #{cost},
+                #{type},
+                #{changeQty},
+                #{changeCost},
+                #{lastPurchasePrice},
+                #{avagePurchasePrice},
+                #{resideQty},
+                #{resideCost})
+    </insert>
+
+</mapper>
