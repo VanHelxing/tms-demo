@@ -20,12 +20,16 @@ public class Stock {
     private double changeCost;
     /** 最后一次采购价 */
     private double lastPurchasePrice;
+    /** 移动加权平均 */
+    private double avagePrice;
     /** 采购均价 */
     private double avagePurchasePrice;
     /** 剩余库存数量 */
     private double resideQty;
     /** 剩余库存成本*/
     private double resideCost;
+    /** 库存偏差数量 */
+    private double biasQty;
 
     public Stock() {
     }
@@ -108,5 +112,21 @@ public class Stock {
 
     public void setResideCost(double resideCost) {
         this.resideCost = resideCost;
+    }
+
+    public double getBiasQty() {
+        return biasQty;
+    }
+
+    public void setBiasQty(double biasQty) {
+        this.biasQty = biasQty;
+    }
+
+    public double getAvagePrice() {
+        return avagePrice;
+    }
+
+    public void setAvagePrice(double avagePrice) {
+        this.avagePrice = avagePrice;
     }
 }

@@ -4,7 +4,7 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/vanhx?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull
     username: root
-    password: db2admin
+    password: vanhx123456
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
       minimum-idle: 5
