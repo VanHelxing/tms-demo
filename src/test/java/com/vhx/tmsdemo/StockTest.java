@@ -27,7 +27,7 @@ public class StockTest {
 
 
     /**
-     * 移动加权平均 + 库存偏差
+     * 移动加权平均 + 库存偏差 + 随机盘点/调价(未实现)
      */
     @Test
     public void YiDongJiaQuanPingJun(){
