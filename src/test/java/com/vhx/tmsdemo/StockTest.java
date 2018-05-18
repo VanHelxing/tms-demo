@@ -16,18 +16,18 @@ import java.util.Random;
 public class StockTest {
 
     //起始库存数量为100
-    private static final double startQty = 100;
+    private static final double startQty = 50;
     //起始库存成本为200元
     private static final double startCost = 1000;
-    //采购单价为10元
-    private static final double price = 10;
+    //采购单价为20元
+    private static final double price = 20;
 
     @Resource
     private StockDao stockDao;
 
 
     /**
-     * 移动加权平均 + 库存偏差 + 随机盘点/调价(未实现)
+     * 移动加权平均 + 库存偏差 + 随机盘点/调价(已实现)
      */
     @Test
     public void YiDongJiaQuanPingJun(){
@@ -37,26 +37,46 @@ public class StockTest {
         double lastPurchasePrice = price;   //最后一次采购成本价格
         double lastPrice = price; //最后一次入库计算出的成本价
         double baisQty = 0l; //库存偏差
+        boolean isCheck = false; //是否盘点
 
         Random randomQty = new Random(200); //出/入库随机函数
-        Random randomPrice = new Random(10); //价格随机函数
+        Random randomPrice = new Random(5); //价格随机函数
         Random randomType = new Random(2); //入库还是出库, 0-入库, 1-出库
+        Random randomCheck = new Random(2); //0:通过盘点, 1:采购调数量
 
         double qty;
-        double price;
+        double price = lastPurchasePrice;
+        double priceOffset;
         double cost;
         int type;
+        int flag = 0; //0-加法, 1-减法
         Stock preStock = new Stock();
 
         //模拟365天的数据
-        for (int day = 1; day <= 365; day++){
+        for (int day = 1; day <= 1000; day++){
             type = randomType.nextInt(2);
             qty = randomQty.nextInt(200) + 1;
             Stock stock = new Stock();
 
             //入库
             if (type == 0){
-                price = randomPrice.nextInt(10) + 1;
+                priceOffset = randomPrice.nextInt(5) + 1;
+                if (lastPurchasePrice > 30){
+                    flag = 1;
+                }
+                if (lastPurchasePrice < 10){
+                    flag = 0;
+                }
+
+                //价格往下调
+                if (flag == 1){
+                    price = lastPurchasePrice -  priceOffset;
+                }
+                if (flag == 0){
+                    price = lastPurchasePrice + priceOffset;
+                }
+
+
                 lastPurchasePrice = price;
                 cost = NumberUtil.multiply(price, qty);
                 purchaseTotalQty += qty;
@@ -102,8 +122,8 @@ public class StockTest {
                     stock.setChangeQty(qty);
                     stock.setChangeCost(NumberUtil.multiply(qty, lastPrice));
                     stock.setLastPurchasePrice(lastPurchasePrice);
-                    stock.setAvagePurchasePrice(lastPrice);
                     stock.setAvagePrice(purchaseAvagePrice);
+                    stock.setAvagePurchasePrice(lastPrice);
                     if (NumberUtil.subtract(startQty, qty) < 0){
                         baisQty += NumberUtil.subtract(startQty, qty);
                         stock.setResideQty(0);
@@ -122,8 +142,8 @@ public class StockTest {
                     stock.setChangeQty(qty);
                     stock.setChangeCost(NumberUtil.multiply(qty, lastPrice));
                     stock.setLastPurchasePrice(lastPurchasePrice);
-                    stock.setAvagePurchasePrice(lastPrice);
                     stock.setAvagePrice(purchaseAvagePrice);
+                    stock.setAvagePurchasePrice(lastPrice);
                     if (NumberUtil.subtract(preStock.getResideQty(), qty) < 0){
                         baisQty += NumberUtil.subtract(preStock.getResideQty(), qty);
                         stock.setResideQty(0);
@@ -140,6 +160,67 @@ public class StockTest {
 
             }
             stockDao.insert(stock);
+
+//            //每7天盘点一次
+//            if(day % 7 == 0){
+//                isCheck = true;
+//            }else{
+//                isCheck = false;
+//            }
+//
+//            //是否需要盘点
+//            if(isCheck){
+//                Stock lastStock = stockDao.findLast();
+//                if (lastStock == null){
+//                    throw new RuntimeException("未查询到最后一条记录！");
+//                }
+//                // 存在库片偏差则需盘点
+//                if (baisQty != 0){
+//                    type = randomCheck.nextInt(2) + 2; //2-盘点, 3-采购调数量
+//                    Stock checkStock = new Stock();
+//                    //盘点调整, 数量为库存偏差数量,成本为0
+//                    if (type == 2){
+//                        cost = 0;
+//                        lastPrice = NumberUtil.divide(NumberUtil.add(lastStock.getResideCost(), cost), NumberUtil.add(lastStock.getResideQty(), -baisQty), 4);
+//
+//                        checkStock.setQty(lastStock.getResideQty());
+//                        checkStock.setCost(lastStock.getResideCost());
+//                        checkStock.setType(type);
+//                        checkStock.setChangeQty(-lastStock.getBiasQty());
+//                        checkStock.setChangeCost(cost);
+//                        checkStock.setLastPurchasePrice(lastPurchasePrice);
+//                        checkStock.setAvagePrice(purchaseAvagePrice);
+//                        checkStock.setAvagePurchasePrice(lastPrice);
+//                        checkStock.setResideQty(NumberUtil.add(lastStock.getResideQty(), -baisQty));
+//                        checkStock.setResideCost(NumberUtil.add(lastStock.getResideCost(), cost));
+//                        stockDao.insert(checkStock);
+//                        preStock = checkStock;
+//                    }
+//                    //采购调数, 数量为库存偏差数量,成本为最后一次采购成本单价 * 偏差数量
+//                    if (type == 3){
+//                        cost = NumberUtil.multiply(-baisQty, lastPurchasePrice);
+//                        purchaseTotalQty += -baisQty;
+//                        purchaseTotalCost += cost;
+//                        purchaseAvagePrice = NumberUtil.divide(purchaseTotalCost,purchaseTotalQty,4);
+//                        lastPrice = NumberUtil.divide(NumberUtil.add(lastStock.getResideCost(), cost), NumberUtil.add(lastStock.getResideQty(), -baisQty), 4);
+//
+//                        checkStock.setQty(lastStock.getResideQty());
+//                        checkStock.setCost(lastStock.getResideCost());
+//                        checkStock.setType(type);
+//                        checkStock.setChangeQty(-lastStock.getBiasQty());
+//                        checkStock.setChangeCost(cost);
+//                        checkStock.setLastPurchasePrice(lastPurchasePrice);
+//                        checkStock.setAvagePrice(purchaseAvagePrice);
+//                        checkStock.setAvagePurchasePrice(lastPrice);
+//                        checkStock.setResideQty(NumberUtil.add(lastStock.getResideQty(), -baisQty));
+//                        checkStock.setResideCost(NumberUtil.add(lastStock.getResideCost(), cost));
+//                        stockDao.insert(checkStock);
+//                        preStock = checkStock;
+//                    }
+//                    baisQty = 0;
+//                }
+//            }
+
         }
     }
 
@@ -261,6 +342,4 @@ public class StockTest {
 //          stockDao.insert(stock);
 //        }
 //    }
-
-
 }

@@ -18,4 +18,26 @@
                 #{avagePrice})
     </insert>
 
+
+    <!-- 查找最后一条数据 -->
+    <select id="findLast" resultType="com.vhx.tmsdemo.entity.system.Stock">
+        select <include refid="select_filed"/>
+        from stock s
+        order by id desc limit 1
+    </select>
+
+    <sql id="select_filed">
+             s.id as 'day',
+			 s.qty,
+			 s.cost,
+			 s.type,
+			 s.change_qty as changeQty,
+			 s.change_cost as changeCost,
+			 s.last_purchase_price as lastPurchasePrice,
+			 s.avage_price as avagePrice,
+			 s.avage_purchase_price as avagePurchasePrice,
+			 s.reside_qty as resideQty,
+			 s.reside_cost as resideCost,
+			 s.bias_qty as biasQty
+    </sql>
 </mapper>
